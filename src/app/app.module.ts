@@ -11,6 +11,9 @@ import { TabsPage } from '../pages/tabs/tabs';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { MqttProvider } from '../providers/mqtt/mqtt';
+import { HttpModule } from '@angular/http';
+import { LongPressModule } from 'ionic-long-press';
 
 @NgModule({
   declarations: [
@@ -23,7 +26,9 @@ import { SplashScreen } from '@ionic-native/splash-screen';
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    LongPressModule,
+    HttpModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -37,7 +42,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    MqttProvider
   ]
 })
 export class AppModule {}

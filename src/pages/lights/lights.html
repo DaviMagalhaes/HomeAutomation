@@ -27,7 +27,7 @@
   <!-- Lista de módulos -->
   <div *ngIf="listLights.length > 0; else elseBlock">
     <ion-list>
-      <ion-item *ngFor="let light of listLights">
+      <ion-item *ngFor="let light of listLights" ion-long-press (onPressStart)="editModule(light)">
         <ion-label>{{light.name}}</ion-label>
         <ion-toggle [(ngModel)]="light.active" (ngModelChange)="functionLight(light)"></ion-toggle>
       </ion-item>

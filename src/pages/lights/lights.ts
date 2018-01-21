@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { MqttProvider } from '../../providers/mqtt/mqtt';
 
 /**
  * Generated class for the LightsPage page.
@@ -12,18 +13,24 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 @Component({
   selector: 'page-lights',
   templateUrl: 'lights.html',
+  providers: [
+    MqttProvider
+  ]
 })
 export class LightsPage {
 
   // Lista de módulos / Luzes
   private listLights = new Array();
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    public mqttProvider: MqttProvider) {
   }
 
   // Atualiza a lista de módulos
   ionViewDidLoad() {
-    let obj1 = {name:"Sala", active:true, token:"sdgfdbgtbet"};
+    let obj1 = {name:"Sala2", active:true, token:"sdgfdbgtbet"};
     let obj2 = {name:"Quarto", active:false, token:"sdgfdbgtbet"};
 
     this.listLights.push(obj1, obj2);
@@ -34,13 +41,18 @@ export class LightsPage {
     console.log(item);
   }
 
+  // Editar definições do módulo
+  private editModule(item:any) {
+    console.log(item);
+  }
+
   // Adicionar módulo
-  public addModule() {
+  private addModule() {
     console.log("addModule");
   }
 
   // Abrir configurações
-  public openSettings() {
+  private openSettings() {
     console.log("openSettings");
   }
 
