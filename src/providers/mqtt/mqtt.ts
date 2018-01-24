@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Paho } from 'ng2-mqtt/mqttws31';
 import { DataProvider } from '../data/data';
-import { LightsPage } from '../../pages/lights/lights';
+import { ToastController } from 'ionic-angular';
+import { Toast } from 'ionic-angular/components/toast/toast';
 
 /*
   Generated class for the MqttProvider provider.
@@ -25,22 +26,35 @@ export class MqttProvider {
   private clientId: string;
   private listControls = new Array<any>();
   private listPendingSubscribe = new Array<string>();
+  private toast: Toast;
 
   // Chaves de tipos de módulos
   private keyLights: string = "lights";
   private keyPlugs: string = "plugs";
   
-  constructor(private dataProvider: DataProvider) {
+  constructor(
+    private toastCtrl: ToastController,
+    private dataProvider: DataProvider
+  ) {
     console.log("constructor MqttProvider");
+    this.connectServer();
+  }
 
-    let serverAddress = dataProvider.getServerAddress();
-    this.clientId     = dataProvider.getUser();
+  // Conectar ao servidor
+  public connectServer() {
+    console.log("connectServer MqttProvider");
+
+    let serverAddress = this.dataProvider.getServerAddress();
+    this.clientId     = this.dataProvider.getUser();
 
     this.client = new Paho.MQTT.Client(serverAddress, 8080, this.clientId);
 
     this.onConnectionLost();
     this.onMessage();
-    this.client.connect({onSuccess: this.onConnected.bind(this)});
+    this.client.connect({
+      onSuccess: this.onConnected.bind(this),
+      onFailure: this.onFailure.bind(this)
+    });
   }
 
   // Se inscrever
@@ -93,16 +107,36 @@ export class MqttProvider {
   public onConnected() {
     console.log("connected successfully MqttProvider");
 
+    if(this.toast)
+      this.toast.dismissAll();
+
     // Se inscreve em tópicos pendentes
-    for(let topic of this.listPendingSubscribe)
-      this.subscribe(topic);
+    while(this.listPendingSubscribe.length > 0)
+      this.subscribe(this.listPendingSubscribe.pop());
   }
 
   // Conexão perdida
   public onConnectionLost() {
     this.client.onConnectionLost = (responseObject: Object) => {
       console.log("connection lost MqttProvider:", JSON.stringify(responseObject));
+
+      this.toast = this.toastCtrl.create({
+        message: "Conexão perdida com o servidor.",
+        duration: 5000,
+        showCloseButton: true
+      });
+      this.toast.present();
     };
+  }
+
+  // Tentativa de conexão falhou
+  public onFailure() {
+    this.toast = this.toastCtrl.create({
+      message: "Não foi possível conectar ao servidor.",
+      duration: 10000,
+      showCloseButton: true
+    });
+    this.toast.present();
   }
 
   // PARA COMUNICAÇÃO EM DUAS VIAS
