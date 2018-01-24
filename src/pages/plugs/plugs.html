@@ -8,11 +8,35 @@
 
   <ion-navbar>
     <ion-title>Tomadas</ion-title>
+
+    <ion-buttons end>
+      <button ion-button icon-only (click)="addModule()">
+        <ion-icon name="add-circle"></ion-icon>
+      </button>
+      <button ion-button icon-only (click)="openSettings()">
+        <ion-icon name="settings"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
+
+  <!-- Lista de módulos -->
+  <div *ngIf="listPlugs.length > 0; else elseBlock">
+    <ion-list>
+      <ion-item *ngFor="let plug of listPlugs" ion-long-press (onPressStart)="editModule(plug)">
+        <ion-label>{{plug.name}}</ion-label>
+        <ion-toggle [(ngModel)]="plug.active" (ngModelChange)="functionPlug(plug)"></ion-toggle>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <!-- Mensagem caso não haja módulos -->
+  <ng-template #elseBlock>
+      <p padding text-center>Não há tomadas cadastradas.</p>
+  </ng-template>
 
 </ion-content>

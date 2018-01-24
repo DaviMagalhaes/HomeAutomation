@@ -7,12 +7,28 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>Settings</ion-title>
+    <ion-title>Configurações</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
+
+    <ion-list>
+      <ion-item>
+        <ion-label>Servidor</ion-label>
+        <ion-input [(ngModel)]="serverAddress" type="text"></ion-input>
+      </ion-item>
+    
+      <ion-item>
+        <ion-label>Usuário</ion-label>
+        <ion-input [(ngModel)]="userId" type="text"></ion-input>
+      </ion-item>
+    </ion-list>
+    
+    <div padding>
+      <button ion-button block>Default</button>
+    </div>
 
 </ion-content>

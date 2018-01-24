@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { DataProvider } from '../../providers/data/data';
 
 /**
  * Generated class for the SettingsPage page.
@@ -15,11 +16,22 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class SettingsPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  // Atributos
+  private serverAddress: string;
+  private userId: string;
+
+  constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    public dataProvider: DataProvider) {
   }
 
+  // Atualizar o formulário
   ionViewDidLoad() {
-    console.log('ionViewDidLoad SettingsPage');
+    console.log("ionViewDidLoad SettingsPage");
+
+    this.serverAddress = this.dataProvider.getServerAddress();
+    this.userId        = this.dataProvider.getUser();
   }
 
 }

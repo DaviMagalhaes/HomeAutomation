@@ -14,6 +14,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { MqttProvider } from '../providers/mqtt/mqtt';
 import { HttpModule } from '@angular/http';
 import { LongPressModule } from 'ionic-long-press';
+import { DataProvider } from '../providers/data/data';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { LongPressModule } from 'ionic-long-press';
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    MqttProvider
+    MqttProvider,
+    DataProvider
   ]
 })
 export class AppModule {}

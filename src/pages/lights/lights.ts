@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { MqttProvider } from '../../providers/mqtt/mqtt';
+import { DataProvider } from '../../providers/data/data';
+import { SettingsPage } from '../settings/settings';
 
 /**
  * Generated class for the LightsPage page.
@@ -12,38 +14,56 @@ import { MqttProvider } from '../../providers/mqtt/mqtt';
 @IonicPage()
 @Component({
   selector: 'page-lights',
-  templateUrl: 'lights.html',
-  providers: [
-    MqttProvider
-  ]
+  templateUrl: 'lights.html'
 })
 export class LightsPage {
 
   // Lista de módulos / Luzes
   private listLights = new Array();
 
+  // Chave
+  private keyLights: string = "lights";
+
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
+    public dataProvider: DataProvider,
     public mqttProvider: MqttProvider) {
+      mqttProvider.addControl(this);
   }
 
-  // Atualiza a lista de módulos
+  // Atualizar a lista de módulos e comunicação com o servidor
   ionViewDidLoad() {
-    let obj1 = {name:"Sala2", active:true, token:"sdgfdbgtbet"};
-    let obj2 = {name:"Quarto", active:false, token:"sdgfdbgtbet"};
-
-    this.listLights.push(obj1, obj2);
+    console.log("ionViewDidLoad LightsPage");
+    
+    this.listLights = this.dataProvider.getListLights();
+    this.serverSubscribe();
   }
 
-  // Executa função do módulo
-  private functionLight(item:any) {
-    console.log(item);
+  // Inscrever-se no servidor
+  private serverSubscribe() {
+    if(this.listLights.length > 0)
+      this.mqttProvider.subscribe(this.keyLights +"/+");
   }
 
-  // Editar definições do módulo
-  private editModule(item:any) {
-    console.log(item);
+  // Executar função de módulo
+  private functionLight(item: any) {
+    console.log("functionLight LightsPage:", item);
+
+    let topic = this.keyLights +"/"+ item.token;
+    this.mqttProvider.publish(item.active ? "1" : "0", topic);
+  }
+
+  // Atualizar status de módulo
+  public updateStatus(token: string, active: boolean) {
+    let item = this.listLights.find(function(element) {
+      return element.token == token;
+    });
+
+    console.log("updateStatus LightsPage:", token, active);
+
+    if(item)
+      item.active = active;
   }
 
   // Adicionar módulo
@@ -51,9 +71,20 @@ export class LightsPage {
     console.log("addModule");
   }
 
-  // Abrir configurações
+  // Remover módulo
+  private rmModule() {
+    console.log("rmModule");
+
+  }
+
+  // Editar definições de módulo
+  private editModule(item: any) {
+    console.log("editModule");
+  }
+
+  // Abrir configurações do usuário
   private openSettings() {
-    console.log("openSettings");
+    this.navCtrl.push(SettingsPage);
   }
 
 }
