@@ -31,7 +31,7 @@ import { Hotspot } from '@ionic-native/hotspot';
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp),
+    IonicModule.forRoot(MyApp, {tabsPlacement: "bottom", tabsHideOnSubPages: true}),
     LongPressModule,
     HttpModule
   ],

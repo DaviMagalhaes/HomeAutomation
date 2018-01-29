@@ -12,20 +12,24 @@ export class DataProvider {
   // Chaves
   private keyUser: string       = "user";
   private keyServer: string     = "server";
+  private keyServerPort: string = "serverPort";
+  private keyServerUser: string = "serverUser";
+  private keyServerPw: string   = "serverPw";
   private keyLights: string     = "lights";
   private keyPlugs: string      = "plugs";
   private keyListLights: string = "listLights";
   private keyListPlugs: string  = "listPlugs";
 
   // Valores padrões
-  private defaultServer: string = "test.mosquitto.org";
+  private defaultServer: string     = "test.mosquitto.org";
+  private defaultServerPort: number = 8080;
 
   constructor() {
     console.log("constructor DataProvider");
   }
 
   // USUÁRIO
-  public getUser() {
+  public getUser(): string {
     let user = localStorage.getItem(this.keyUser);
 
     if(user == null) {
@@ -44,7 +48,7 @@ export class DataProvider {
   }
 
   // SERVIDOR
-  public getServerAddress() {
+  public getServerAddress(): string {
     let serverAddress = localStorage.getItem(this.keyServer);
 
     if(serverAddress == null) {
@@ -58,6 +62,57 @@ export class DataProvider {
   public setServerAddress(serverAddress: string) {
     console.log("setServerAddress DataProvider:", serverAddress);
     localStorage.setItem(this.keyServer, serverAddress);
+  }
+
+  // PORTA DO SERVIDOR
+  public getServerPort(): string {
+    let serverPort = localStorage.getItem(this.keyServerPort);
+
+    if(serverPort == null) {
+      serverPort = this.defaultServerPort.toString();
+      this.setServerPort(serverPort);
+    }
+
+    console.log("getServerPort DataProvider:", serverPort);
+    return serverPort;
+  }
+  public setServerPort(serverPort: string) {
+    console.log("setServerPort DataProvider:", serverPort);
+    localStorage.setItem(this.keyServerPort, serverPort);
+  }
+
+  // USUÁRIO PARA SERVIDOR
+  public getServerUser(): string {
+    let serverUser = localStorage.getItem(this.keyServerUser);
+    
+      if(serverUser == null) {
+        serverUser = "";
+        this.setServerPort(serverUser);
+      }
+  
+      console.log("getServerUser DataProvider:", serverUser);
+      return serverUser;
+  }
+  public setServerUser(serverUser: string) {
+    console.log("setServerUser DataProvider:", serverUser);
+    localStorage.setItem(this.keyServerUser, serverUser);
+  }
+
+  // SENHA PARA SERVIDOR
+  public getServerPw(): string {
+    let serverPw = localStorage.getItem(this.keyServerPw);
+    
+      if(serverPw == null) {
+        serverPw = "";
+        this.setServerPort(serverPw);
+      }
+  
+      console.log("getServerPw DataProvider:", serverPw);
+      return serverPw;
+  }
+  public setServerPw(serverPw: string) {
+    console.log("setServerPw DataProvider:", serverPw);
+    localStorage.setItem(this.keyServerPw, serverPw);
   }
 
   // LISTA DE LUZES

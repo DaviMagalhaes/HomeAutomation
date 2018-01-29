@@ -20,6 +20,9 @@ export class SettingsPage {
 
   // Atributos
   private serverAddress: string;
+  private serverPort: string;
+  private serverUser: string;
+  private serverPw: string;
   private userId: string;
 
   constructor(
@@ -35,6 +38,9 @@ export class SettingsPage {
     console.log("ionViewDidLoad SettingsPage");
 
     this.serverAddress = this.dataProvider.getServerAddress();
+    this.serverPort    = this.dataProvider.getServerPort();
+    this.serverUser    = this.dataProvider.getServerUser();
+    this.serverPw      = this.dataProvider.getServerPw();
     this.userId        = this.dataProvider.getUser();
   }
 
@@ -44,8 +50,11 @@ export class SettingsPage {
 
     let message;
 
-    if(this.serverAddress != "" && this.userId != "") {
+    if(this.serverAddress != "" && this.userId != "" && this.serverPort) {
       this.dataProvider.setServerAddress(this.serverAddress);
+      this.dataProvider.setServerPort(this.serverPort);
+      this.dataProvider.setServerUser(this.serverUser);
+      this.dataProvider.setServerPw(this.serverPw);
       this.dataProvider.setUser(this.userId);
 
       this.navCtrl.pop();

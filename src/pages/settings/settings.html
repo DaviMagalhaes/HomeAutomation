@@ -20,10 +20,22 @@
         <ion-label>Servidor</ion-label>
         <ion-input [(ngModel)]="serverAddress" type="text"></ion-input>
       </ion-item>
-    
+      <ion-item>
+        <ion-label>Porta</ion-label>
+        <ion-input [(ngModel)]="serverPort" type="text"></ion-input>
+      </ion-item>
       <ion-item>
         <ion-label>Usuário</ion-label>
-        <ion-input [(ngModel)]="userId" type="text"></ion-input>
+        <ion-input [(ngModel)]="serverUser" type="text"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Senha</ion-label>
+        <ion-input [(ngModel)]="serverPw" type="text"></ion-input>
+      </ion-item>
+    
+      <ion-item>
+        <ion-label>Identificador</ion-label>
+        <ion-input [(ngModel)]="userId" [disabled]="true" type="text"></ion-input>
       </ion-item>
     </ion-list>
     

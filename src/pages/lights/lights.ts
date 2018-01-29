@@ -50,7 +50,7 @@ export class LightsPage {
   // Inscrever-se no servidor
   private serverSubscribe() {
     if(this.listLights.length > 0)
-      this.mqttProvider.subscribe(this.keyLights +"/+");
+      this.mqttProvider.subscribe("+/out");
   }
 
   // Executar função de módulo

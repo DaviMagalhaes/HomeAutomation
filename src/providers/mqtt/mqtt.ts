@@ -35,9 +35,6 @@ export class MqttProvider {
 
   // Chave
   private keyTopicUpdateAll: string = "ALL";
-
-  // Configurações para SERVIDOR
-  private serverPort: number = 8080;
   
   constructor(
     private toastCtrl: ToastController,
@@ -50,16 +47,21 @@ export class MqttProvider {
   // Conectar ao servidor
   public connectServer() {
     let serverAddress = this.dataProvider.getServerAddress();
+    let serverPort    = this.dataProvider.getServerPort();
+    let serverUser    = this.dataProvider.getServerUser();
+    let serverPw      = this.dataProvider.getServerPw();
     this.clientId     = this.dataProvider.getUser();
 
-    console.log("connectServer MqttProvider / connecting to server:",
-        serverAddress, this.serverPort, this.clientId);
+    console.log("connectServer MqttProvider");
+    console.log("connecting to server:", serverAddress, serverPort, this.clientId);
 
-    this.client = new Paho.MQTT.Client(serverAddress, this.serverPort, this.clientId);
+    this.client = new Paho.MQTT.Client(serverAddress, Number(serverPort), this.clientId);
 
     this.onConnectionLost();
     this.onMessage();
     this.client.connect({
+      userName: serverUser,
+      password: serverPw,
       onSuccess: this.onConnected.bind(this),
       onFailure: this.onFailure.bind(this),
       timeout: 10,
@@ -70,7 +72,7 @@ export class MqttProvider {
   // Se inscrever
   public subscribe(topic: string) {
     if(this.client.isConnected()) {
-      topic = this.clientId +"/"+ topic +"/out";
+      topic = this.clientId +"/"+ topic;
 
       console.log("subscribe MqttProvider:", topic);
       this.client.subscribe(topic);
@@ -110,10 +112,14 @@ export class MqttProvider {
       let topicArray = message.destinationName.split("/");
       let token = topicArray[1];
 
-      this.listControls["LightsPage"]
-          .updateStatus(token, (message.payloadString == "1" ? true : false));
-      this.listControls["PlugsPage"]
-          .updateStatus(token, (message.payloadString == "1" ? true : false));
+      if(this.listControls["LightsPage"]) {
+        this.listControls["LightsPage"]
+            .updateStatus(token, (message.payloadString == "1" ? true : false));
+      }
+      if(this.listControls["PlugsPage"]) {
+        this.listControls["PlugsPage"]
+            .updateStatus(token, (message.payloadString == "1" ? true : false));
+      }
     };
   }
 

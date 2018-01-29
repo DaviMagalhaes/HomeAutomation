@@ -50,7 +50,7 @@ export class PlugsPage {
   // Inscrever-se no servidor
   private serverSubscribe() {
     if(this.listPlugs.length > 0)
-      this.mqttProvider.subscribe(this.keyPlugs +"/+");
+      this.mqttProvider.subscribe("+/out");
   }
 
   // Executar função de módulo
