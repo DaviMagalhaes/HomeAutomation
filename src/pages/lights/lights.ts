@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { MqttProvider } from '../../providers/mqtt/mqtt';
 import { DataProvider } from '../../providers/data/data';
 import { SettingsPage } from '../settings/settings';
+import { ModulePage } from '../module/module';
 
 /**
  * Generated class for the LightsPage page.
@@ -35,9 +36,15 @@ export class LightsPage {
   // Atualizar a lista de módulos e comunicação com o servidor
   ionViewDidLoad() {
     console.log("ionViewDidLoad LightsPage");
-    
+
     this.listLights = this.dataProvider.getListLights();
     this.serverSubscribe();
+  }
+
+  // Atualizar a lista de módulos
+  ionViewWillEnter() {
+    console.log("ionViewWillEnter LightsPage");
+    this.listLights = this.dataProvider.getListLights();
   }
 
   // Inscrever-se no servidor
@@ -50,7 +57,7 @@ export class LightsPage {
   private functionLight(item: any) {
     console.log("functionLight LightsPage:", item);
 
-    let topic = this.keyLights +"/"+ item.token;
+    let topic = item.token +"/in";
     this.mqttProvider.publish(item.active ? "1" : "0", topic);
   }
 
@@ -60,26 +67,22 @@ export class LightsPage {
       return element.token == token;
     });
 
-    console.log("updateStatus LightsPage:", token, active);
-
-    if(item)
+    if(item) {
       item.active = active;
+      console.log("updateStatus LightsPage:", item);
+
+      this.dataProvider.saveModule(item, this.keyLights);
+    }
   }
 
   // Adicionar módulo
   private addModule() {
-    console.log("addModule");
-  }
-
-  // Remover módulo
-  private rmModule() {
-    console.log("rmModule");
-
+    this.navCtrl.push(ModulePage, {moduleType: this.keyLights});
   }
 
   // Editar definições de módulo
   private editModule(item: any) {
-    console.log("editModule");
+    this.navCtrl.push(ModulePage, {moduleType: this.keyLights, tokenSearch: item.token});
   }
 
   // Abrir configurações do usuário

@@ -12,6 +12,8 @@ export class DataProvider {
   // Chaves
   private keyUser: string       = "user";
   private keyServer: string     = "server";
+  private keyLights: string     = "lights";
+  private keyPlugs: string      = "plugs";
   private keyListLights: string = "listLights";
   private keyListPlugs: string  = "listPlugs";
 
@@ -27,7 +29,9 @@ export class DataProvider {
     let user = localStorage.getItem(this.keyUser);
 
     if(user == null) {
-      user = (Math.floor(Math.random() * (Math.pow(10, 10) - 1)) + 1).toString();
+      let min = Math.pow(10, 9);
+      let max = Math.pow(10, 10);
+      user = (Math.floor(Math.random() * (max - min)) + min).toString();
       this.setUser(user);
     }
 
@@ -57,7 +61,7 @@ export class DataProvider {
   }
 
   // LISTA DE LUZES
-  public getListLights() {
+  public getListLights(): any[] {
     let listLights = JSON.parse(localStorage.getItem(this.keyListLights));
 
     if(listLights == null)
@@ -72,7 +76,7 @@ export class DataProvider {
   }
 
   // LISTA DE TOMADAS
-  public getListPlugs() {
+  public getListPlugs(): any[] {
     let listPlugs = JSON.parse(localStorage.getItem(this.keyListPlugs));
 
     if(listPlugs == null)
@@ -84,6 +88,110 @@ export class DataProvider {
   public setListPlugs(listPlugs: any[]) {
     console.log("setListPlugs DataProvider:", listPlugs);
     localStorage.setItem(this.keyListPlugs, JSON.stringify(listPlugs));
+  }
+
+  // Adicionar um módulo
+  public saveModule(module: any, type: any) {
+    console.log("addModule DataProvider:", module);
+
+    let itemFind;
+
+    switch(type) {
+      case this.keyLights:
+        let listLights = this.getListLights();
+        itemFind = listLights.find(function(element) {
+          return element.token == module.token;
+        });
+
+        if(itemFind) {
+          // Editando
+          let indexItem = listLights.indexOf(itemFind, 0);
+          listLights[indexItem] = module;
+        } else {
+          // Adicionando
+          listLights.push(module);
+        }
+
+        this.setListLights(listLights);
+        break;
+
+      case this.keyPlugs:
+        let listPlugs = this.getListPlugs();
+        itemFind = listPlugs.find(function(element) {
+          return element.token == module.token;
+        });
+
+        if(itemFind) {
+          // Editando
+          let indexItem = listPlugs.indexOf(itemFind, 0);
+          listPlugs[indexItem] = module;
+        } else {
+          // Adicionando
+          listPlugs.push(module);
+        }
+
+        this.setListPlugs(listPlugs);
+        break;
+
+      default: break;
+    }
+  }
+
+  // Remover um módulo
+  public deleteModule(module: any, type: any) {
+    console.log("deleteModule DataProvider:", module);
+    
+    let itemFind;
+    let indexItem;
+
+    switch(type) {
+      case this.keyLights:
+        let listLights = this.getListLights();
+        itemFind = listLights.find(function(element) {
+          return element.token == module.token;
+        });
+        if(!itemFind) return;
+
+        indexItem  = listLights.indexOf(itemFind, 0);
+        listLights.splice(indexItem, 1);
+
+        this.setListLights(listLights);
+        break;
+
+      case this.keyPlugs:
+        let listPlugs = this.getListPlugs();
+        itemFind = listPlugs.find(function(element) {
+          return element.token == module.token;
+        });
+        if(!itemFind) return;
+
+        indexItem = listPlugs.indexOf(itemFind, 0);
+        listPlugs.splice(indexItem, 1);
+
+        this.setListPlugs(listPlugs);
+        break;
+
+      default: break;
+    }
+  }
+
+  // Pegar um módulo específico
+  public getModule(token: string): any {
+    console.log("getModule DataProvider:", token);
+
+    let listLights = this.getListLights();
+    let listPlugs  = this.getListPlugs();
+
+    let item;
+    item = listLights.find(function(element) {
+      return element.token == token;
+    });
+    if(item) return item;
+
+    item = listPlugs.find(function(element) {
+      return element.token == token;
+    });
+    return item;
   }
 
 }

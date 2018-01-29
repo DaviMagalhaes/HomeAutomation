@@ -7,6 +7,7 @@ import { LightsPage } from '../pages/lights/lights';
 import { PlugsPage } from '../pages/plugs/plugs';
 import { SettingsPage } from '../pages/settings/settings';
 import { ModulePage } from '../pages/module/module';
+import { ModuleWifiPage } from '../pages/module-wifi/module-wifi';
 import { TabsPage } from '../pages/tabs/tabs';
 
 import { StatusBar } from '@ionic-native/status-bar';
@@ -15,6 +16,8 @@ import { MqttProvider } from '../providers/mqtt/mqtt';
 import { HttpModule } from '@angular/http';
 import { LongPressModule } from 'ionic-long-press';
 import { DataProvider } from '../providers/data/data';
+import { WifiProvider } from '../providers/wifi/wifi';
+import { Hotspot } from '@ionic-native/hotspot';
 
 @NgModule({
   declarations: [
@@ -23,6 +26,7 @@ import { DataProvider } from '../providers/data/data';
     PlugsPage,
     SettingsPage,
     ModulePage,
+    ModuleWifiPage,
     TabsPage
   ],
   imports: [
@@ -38,6 +42,7 @@ import { DataProvider } from '../providers/data/data';
     PlugsPage,
     SettingsPage,
     ModulePage,
+    ModuleWifiPage,
     TabsPage
   ],
   providers: [
@@ -45,7 +50,9 @@ import { DataProvider } from '../providers/data/data';
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     MqttProvider,
-    DataProvider
+    Hotspot,
+    DataProvider,
+    WifiProvider
   ]
 })
 export class AppModule {}

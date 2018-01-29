@@ -12,12 +12,17 @@ import { Toast } from 'ionic-angular/components/toast/toast';
 
   -------
 
-  TOPICS: <clientId>/<lights OR plugs>/<token module>/<in OR out>
-   token: MAC address;
-    in:    publish;
-    out:   subscribe;
-  
-  QoS: 1
+  TOPICS:
+    Message to a module:
+        <clientId>/<token module>/<in OR out>
+        token: MAC address;
+           in:    publish;
+          out:   subscribe;
+
+    Message to sync all:
+        <clientId>/ALL
+  QOS:
+    1
 */
 @Injectable()
 export class MqttProvider {
@@ -28,9 +33,11 @@ export class MqttProvider {
   private listPendingSubscribe = new Array<string>();
   private toast: Toast;
 
-  // Chaves de tipos de módulos
-  private keyLights: string = "lights";
-  private keyPlugs: string = "plugs";
+  // Chave
+  private keyTopicUpdateAll: string = "ALL";
+
+  // Configurações para SERVIDOR
+  private serverPort: number = 8080;
   
   constructor(
     private toastCtrl: ToastController,
@@ -42,18 +49,21 @@ export class MqttProvider {
 
   // Conectar ao servidor
   public connectServer() {
-    console.log("connectServer MqttProvider");
-
     let serverAddress = this.dataProvider.getServerAddress();
     this.clientId     = this.dataProvider.getUser();
 
-    this.client = new Paho.MQTT.Client(serverAddress, 8080, this.clientId);
+    console.log("connectServer MqttProvider / connecting to server:",
+        serverAddress, this.serverPort, this.clientId);
+
+    this.client = new Paho.MQTT.Client(serverAddress, this.serverPort, this.clientId);
 
     this.onConnectionLost();
     this.onMessage();
     this.client.connect({
       onSuccess: this.onConnected.bind(this),
-      onFailure: this.onFailure.bind(this)
+      onFailure: this.onFailure.bind(this),
+      timeout: 10,
+      keepAliveInterval: 600
     });
   }
 
@@ -70,9 +80,21 @@ export class MqttProvider {
   
   // Publicar mensagem
   public publish(message: string, topic: string) {
-    topic = this.clientId +"/"+ topic +"/in";
+    topic = this.clientId +"/"+ topic;
 
     console.log("publish MqttProvider:", message, topic);
+
+    if(!this.client.isConnected()) {
+      console.log("not connected MqttProvider");
+
+      this.toast = this.toastCtrl.create({
+        message: "Sem conexão com servidor.",
+        duration: 3000,
+        showCloseButton: true
+      });
+      this.toast.present();
+      return;
+    }
 
     let packet = new Paho.MQTT.Message(message);
     packet.destinationName = topic;
@@ -86,21 +108,21 @@ export class MqttProvider {
       console.log("message arrived MqttProvider:", message.payloadString, message.destinationName);
 
       let topicArray = message.destinationName.split("/");
-      let typeModule = topicArray[1];
-      let token = topicArray[2];
+      let token = topicArray[1];
 
-      switch(typeModule) {
-        case this.keyLights:
-          this.listControls["LightsPage"]
-            .updateStatus(token, (message.payloadString == "1" ? true : false));
-          break;
-        case this.keyPlugs:
-          this.listControls["PlugsPage"]
-            .updateStatus(token, (message.payloadString == "1" ? true : false));
-          break;
-        default: break;
-      }
+      this.listControls["LightsPage"]
+          .updateStatus(token, (message.payloadString == "1" ? true : false));
+      this.listControls["PlugsPage"]
+          .updateStatus(token, (message.payloadString == "1" ? true : false));
     };
+  }
+
+  // Atualizar/sincronizar status com os dos atuadores
+  public syncStatus() {
+    console.log("syncStatus MqttProvider");
+
+    // <clientId>/ALL
+    this.publish("1", this.keyTopicUpdateAll);
   }
 
   // Conectado
@@ -108,11 +130,13 @@ export class MqttProvider {
     console.log("connected successfully MqttProvider");
 
     if(this.toast)
-      this.toast.dismissAll();
+      this.toast.dismiss();
 
     // Se inscreve em tópicos pendentes
     while(this.listPendingSubscribe.length > 0)
       this.subscribe(this.listPendingSubscribe.pop());
+    
+    this.syncStatus();
   }
 
   // Conexão perdida

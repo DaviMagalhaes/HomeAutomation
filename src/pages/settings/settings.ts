@@ -58,7 +58,7 @@ export class SettingsPage {
     this.toastCtrl.create({
       message: message,
       position: "middle",
-      duration: 2000
+      duration: 1000
     }).present();
   }
 

@@ -1,0 +1,52 @@
+<!--
+  Generated template for the ModuleWifiPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Configurar comunicação</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+
+  <!-- Instrução inicial -->
+  <div *ngIf="uiStart" id="settingModule" margin>
+    <ion-icon name="wifi" margin-top></ion-icon>
+    <p text-left padding-horizontal>
+      Durante a configuração da comunicação com seu atuador de automação será necessário desconectar seu aparelho da sua rede Wi-Fi, e consequentemente da internet, por um breve período. Mas posteriormente voltará tudo ao normal.<br />
+      Para continuar clique no botão a seguir.
+    </p>
+    <button (click)="settingCommunication()" ion-button block>
+      Configurar atuador
+    </button>
+  </div>
+
+  <!-- Lista de redes Wi-Fi identificadas pelo atuador -->
+  <div *ngIf="listWifis.length > 0; else elseBlock">
+    <p margin-horizontal>
+      Escolha a rede Wi-Fi que o atuador deverá se conectar.
+    </p>
+    <ion-list>
+      <ion-item *ngFor="let wifi of listWifis" (click)="getPasswordToWifi(wifi)">
+        <b>{{wifi.ssid}}</b>
+        <p>
+          <ion-icon name="stats"></ion-icon>
+          {{wifi.qlt}}% &nbsp;
+          <ion-icon *ngIf="wifi.pw == 1" name="lock"></ion-icon>
+        </p>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <!-- Mensagem caso não haja redes Wi-Fi -->
+  <ng-template *ngIf="uiStart" #elseBlock>
+    <p padding text-center>Não há redes Wi-Fi alcançáveis ao atuador.</p>
+  </ng-template>
+
+</ion-content>

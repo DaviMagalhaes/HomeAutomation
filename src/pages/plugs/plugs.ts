@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { MqttProvider } from '../../providers/mqtt/mqtt';
 import { DataProvider } from '../../providers/data/data';
+import { SettingsPage } from '../settings/settings';
+import { ModulePage } from '../module/module';
 
 /**
  * Generated class for the PlugsPage page.
@@ -39,6 +41,12 @@ export class PlugsPage {
     this.serverSubscribe();
   }
 
+  // Atualizar a lista de módulos
+  ionViewWillEnter() {
+    console.log("ionViewWillEnter PlugsPage");
+    this.listPlugs = this.dataProvider.getListPlugs();
+  }
+
   // Inscrever-se no servidor
   private serverSubscribe() {
     if(this.listPlugs.length > 0)
@@ -49,7 +57,7 @@ export class PlugsPage {
   private functionPlug(item: any) {
     console.log("functionPlug PlugsPage:", item);
 
-    let topic = this.keyPlugs +"/"+ item.token;
+    let topic = item.token +"/in";
     this.mqttProvider.publish(item.active ? "1" : "0", topic);
   }
 
@@ -59,31 +67,27 @@ export class PlugsPage {
       return element.token == token;
     });
 
-    console.log("updateStatus PlugsPage:", token, active);
-
-    if(item)
+    if(item) {
       item.active = active;
+      console.log("updateStatus PlugsPage:", item);
+
+      this.dataProvider.saveModule(item, this.keyPlugs);
+    }
   }
 
   // Adicionar módulo
   private addModule() {
-    console.log("addModule");
-  }
-
-  // Remover módulo
-  private rmModule() {
-    console.log("rmModule");
-
+    this.navCtrl.push(ModulePage, {moduleType: this.keyPlugs});
   }
 
   // Editar definições de módulo
   private editModule(item: any) {
-    console.log("editModule");
+    this.navCtrl.push(ModulePage, {moduleType: this.keyPlugs, tokenSearch: item.token});
   }
 
   // Abrir configurações do usuário
   private openSettings() {
-    console.log("openSettings");
+    this.navCtrl.push(SettingsPage);
   }
 
 }

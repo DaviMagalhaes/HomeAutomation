@@ -7,12 +7,44 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>Module</ion-title>
+    <ion-title>{{pageTitle}}</ion-title>
+
+    <ion-buttons *ngIf="!tokenSearch" end>
+      <button ion-button icon-only (click)="settingsWifi()"
+        [ngClass]="!tokenSearch ? 'blinkAnimation' : 'nothing'">
+        <ion-icon name="wifi"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
+
+  <ion-list>
+    <ion-item>
+      <ion-label>Nome</ion-label>
+      <ion-input [(ngModel)]="module.name" type="text"></ion-input>
+    </ion-item>
+  
+    <ion-item>
+      <ion-label>Token</ion-label>
+      <ion-input [(ngModel)]="module.token" [disabled]="tokenSearch" type="text"></ion-input>
+    </ion-item>
+  </ion-list>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col *ngIf="tokenSearch" col-3>
+        <button (click)="deleteModule()" ion-button color="light" icon-only>
+          <ion-icon name="trash"></ion-icon>
+        </button>
+      </ion-col>
+      <ion-col>
+        <button (click)="saveModule()" ion-button block>Salvar</button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
 </ion-content>
