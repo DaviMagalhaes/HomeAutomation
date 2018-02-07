@@ -59,16 +59,13 @@ export class SettingsPage {
 
       this.navCtrl.pop();
       this.mqttProvider.connectServer();
-
-      message = "Salvo com sucesso.";
-    } else
-      message = "Preencha todo o formulário.";
-
-    this.toastCtrl.create({
-      message: message,
-      position: "middle",
-      duration: 1000
-    }).present();
+    } else {
+      this.toastCtrl.create({
+        message: "Preencha todo o formulário.",
+        position: "middle",
+        duration: 1000
+      }).present();
+    }
   }
 
 }
