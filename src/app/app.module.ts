@@ -50,9 +50,9 @@ import { Hotspot } from '@ionic-native/hotspot';
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     MqttProvider,
-    Hotspot,
     DataProvider,
-    WifiProvider
+    WifiProvider,
+    Hotspot
   ]
 })
 export class AppModule {}

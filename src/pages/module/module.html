@@ -30,7 +30,8 @@
   
     <ion-item>
       <ion-label>Token</ion-label>
-      <ion-input [(ngModel)]="module.token" [disabled]="tokenSearch" type="text"></ion-input>
+      <ion-input [(ngModel)]="module.token"
+        [disabled]="tokenSearch ? true : false" type="text"></ion-input>
     </ion-item>
   </ion-list>
 
