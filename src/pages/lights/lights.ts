@@ -24,6 +24,8 @@ export class LightsPage {
 
   // Chave
   private keyLights: string = "lights";
+  private keyTopicIn: string = "/in";
+  private keyTopicOut: string = "/out";
 
   constructor(
     public navCtrl: NavController,
@@ -49,16 +51,17 @@ export class LightsPage {
 
   // Inscrever-se no servidor
   private serverSubscribe() {
-    if(this.listLights.length > 0)
-      this.mqttProvider.subscribe("+/out");
+    if(this.listLights.length > 0) {
+      this.listLights.forEach((elem) => {
+        this.mqttProvider.subscribe(elem.token + this.keyTopicOut);
+      });
+    }
   }
 
   // Executar função de módulo
   private functionLight(item: any) {
     console.log("functionLight LightsPage:", item);
-
-    let topic = item.token +"/in";
-    this.mqttProvider.publish(item.active ? "1" : "0", topic);
+    this.mqttProvider.publish(item.active ? "1" : "0", item.token + this.keyTopicIn);
   }
 
   // Atualizar status de módulo
@@ -70,14 +73,22 @@ export class LightsPage {
     if(item) {
       item.active = active;
       console.log("updateStatus LightsPage:", item);
-
       this.dataProvider.saveModule(item, this.keyLights);
     }
   }
 
   // Adicionar módulo
   private addModule() {
-    this.navCtrl.push(ModulePage, {moduleType: this.keyLights});
+    this.navCtrl.push(ModulePage, {moduleType: this.keyLights, callback: this.addModuleComm});
+  }
+
+  // Comunicar-se com novo módulo
+  addModuleComm = (_params) => {
+    return new Promise((resolve, reject) => {
+        let moduleAdded = _params;
+        this.mqttProvider.subscribe(moduleAdded.token + this.keyTopicOut);
+        resolve();
+    });
   }
 
   // Editar definições de módulo

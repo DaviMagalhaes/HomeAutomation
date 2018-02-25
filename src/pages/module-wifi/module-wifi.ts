@@ -24,7 +24,14 @@ export class ModuleWifiPage {
   private callbackFunction;
 
   private listWifis = new Array();
+  private moduleType: string;
   private moduleMacAddress;
+
+  // Chaves
+  private keyLights: string = "lights";
+  private keyPlugs: string = "plugs";
+  private keyLightsRef: string = "l";
+  private keyPlugsRef: string = "p";
 
   constructor(
     public navCtrl: NavController,
@@ -34,6 +41,7 @@ export class ModuleWifiPage {
     private toastCtrl: ToastController,
     public wifiProvider: WifiProvider) {
       this.callbackFunction = this.navParams.get("callback");
+      this.moduleType = this.navParams.get("moduleType");
   }
 
   ionViewDidLoad() {
@@ -60,7 +68,9 @@ export class ModuleWifiPage {
     // Requisitar lista de redes Wi-Fi disponíveis ao atuador
     this.wifiProvider.settingModuleGetListWifis().subscribe(
       data => {
+        this.loadingNotif.dismiss();
         this.uiStart = false;
+
         const response = (data as any)._body;
         this.listWifis = JSON.parse(response);
 
@@ -94,6 +104,16 @@ export class ModuleWifiPage {
       title: "Falha na configuração",
       subTitle: "Não foi possível comunicar-se com o atuador.",
       buttons: ["Ok"]
+    }).present();
+  }
+
+  // Mensagem de atuador não encontrado
+  public msgNotFound() {
+    this.loadingNotif.dismiss();
+    this.alertCtrl.create({
+      title: "Não encontrado",
+      subTitle: "Nenhum atuador foi encontrado durante a busca. Verifique se o atuador encontra-se ligado ou se já não está configurado.",
+      buttons: ["OK"]
     }).present();
   }
 
@@ -139,9 +159,13 @@ export class ModuleWifiPage {
     }).present();
   }
 
-  // Enviar credenciais da rede Wi-Fi indicada para o atuador
+  // Enviar credenciais da rede Wi-Fi indicada para o atuador e o seu tipo
+  // moduleTypeSend = ('l' to light or 'p' to plug)
   private sendPasswordToWifi(wifi: any, password: string) {
-    this.wifiProvider.settingModuleSetWifi(wifi, password).subscribe(
+    let moduleTypeSend =
+      (this.moduleType == this.keyLights ? this.keyLightsRef : this.keyPlugsRef);
+
+    this.wifiProvider.settingModuleSetWifi(wifi, password, moduleTypeSend).subscribe(
       data => {
         this.toastCtrl.create({
           message: "Preencha um nome.",

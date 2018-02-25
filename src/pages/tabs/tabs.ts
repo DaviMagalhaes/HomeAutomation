@@ -12,6 +12,6 @@ export class TabsPage {
   tab2Root = PlugsPage;
 
   constructor() {
-
+    
   }
 }

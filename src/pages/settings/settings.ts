@@ -23,7 +23,6 @@ export class SettingsPage {
   private serverPort: string;
   private serverUser: string;
   private serverPw: string;
-  private userId: string;
 
   constructor(
     public navCtrl: NavController,
@@ -41,7 +40,6 @@ export class SettingsPage {
     this.serverPort    = this.dataProvider.getServerPort();
     this.serverUser    = this.dataProvider.getServerUser();
     this.serverPw      = this.dataProvider.getServerPw();
-    this.userId        = this.dataProvider.getUser();
   }
 
   // Salvar/atualizar dados
@@ -50,12 +48,11 @@ export class SettingsPage {
 
     let message;
 
-    if(this.serverAddress != "" && this.userId != "" && this.serverPort) {
+    if(this.serverAddress != "" && this.serverPort) {
       this.dataProvider.setServerAddress(this.serverAddress);
       this.dataProvider.setServerPort(this.serverPort);
       this.dataProvider.setServerUser(this.serverUser);
       this.dataProvider.setServerPw(this.serverPw);
-      this.dataProvider.setUser(this.userId);
 
       this.navCtrl.pop();
       this.mqttProvider.connectServer();

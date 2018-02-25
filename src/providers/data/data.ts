@@ -10,7 +10,6 @@ import { Injectable } from '@angular/core';
 export class DataProvider {
 
   // Chaves
-  private keyUser: string       = "user";
   private keyServer: string     = "server";
   private keyServerPort: string = "serverPort";
   private keyServerUser: string = "serverUser";
@@ -21,30 +20,11 @@ export class DataProvider {
   private keyListPlugs: string  = "listPlugs";
 
   // Valores padrões
-  private defaultServer: string     = "test.mosquitto.org";
-  private defaultServerPort: number = 8080;
+  private defaultServer: string     = "broker.hivemq.com";
+  private defaultServerPort: number = 8000;
 
   constructor() {
     console.log("constructor DataProvider");
-  }
-
-  // USUÁRIO
-  public getUser(): string {
-    let user = localStorage.getItem(this.keyUser);
-
-    if(user == null) {
-      let min = Math.pow(10, 9);
-      let max = Math.pow(10, 10);
-      user = (Math.floor(Math.random() * (max - min)) + min).toString();
-      this.setUser(user);
-    }
-
-    console.log("getUser DataProvider:", user);
-    return user;
-  }
-  public setUser(user: string) {
-    console.log("setUser DataProvider:", user);
-    localStorage.setItem(this.keyUser, user);
   }
 
   // SERVIDOR
@@ -87,7 +67,7 @@ export class DataProvider {
     
       if(serverUser == null) {
         serverUser = "";
-        this.setServerPort(serverUser);
+        this.setServerUser(serverUser);
       }
   
       console.log("getServerUser DataProvider:", serverUser);
@@ -104,7 +84,7 @@ export class DataProvider {
     
       if(serverPw == null) {
         serverPw = "";
-        this.setServerPort(serverPw);
+        this.setServerPw(serverPw);
       }
   
       console.log("getServerPw DataProvider:", serverPw);
@@ -146,8 +126,9 @@ export class DataProvider {
   }
 
   // Adicionar um módulo
+  // module = {name, active, token}
   public saveModule(module: any, type: any) {
-    console.log("addModule DataProvider:", module);
+    console.log("saveModule DataProvider:", module);
 
     let itemFind;
 

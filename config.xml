@@ -79,6 +79,8 @@
     </platform>
     <allow-navigation href="http://10.14.0.5:8100" />
     <allow-navigation href="http://192.168.43.129:8100" />
+    <allow-navigation href="http://192.168.1.28:8100" />
+    <allow-navigation href="http://192.168.43.180:8100" />
     <engine name="android" spec="6.3.0" />
     <plugin name="cordova-plugin-x-toast" spec="^2.6.0" />
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />

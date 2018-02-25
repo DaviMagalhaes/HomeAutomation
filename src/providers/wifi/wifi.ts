@@ -67,12 +67,7 @@ export class WifiProvider {
         // Atuador não encontrado
         if(!itemFind) {
           console.log("module not found WifiProvider");
-          
-          this.alertCtrl.create({
-            title: "Não encontrado",
-            subTitle: "Nenhum atuador foi encontrado durante a busca. Verifique se o atuador encontra-se ligado ou se já não está configurado.",
-            buttons: ["OK"]
-          }).present();
+          moduleWifiPage.msgNotFound();
           return false;
         }
       }
@@ -89,8 +84,8 @@ export class WifiProvider {
           moduleWifiPage.communicationFailure();
         }
       );
-      return true;
     });
+    return true;
   }
 
   // CONFIGURAR COMUNICAÇÃO COM O ATUADOR: Pegar endereço MAC para token
@@ -104,10 +99,12 @@ export class WifiProvider {
   }
 
   // CONFIGURAR COMUNICAÇÃO DO ATUADOR: Enviar credenciais de rede Wi-Fi e servidor MQTT para o atuador
-  public settingModuleSetWifi(wifi: any, password: string) {
-    return this.http.get(
-      this.keyWifiServer +"/wifisave?s="+ wifi.ssid +"&p="+ password +
-      "&m="+ this.dataProvider.getServerAddress() + "&c=" + this.dataProvider.getUser()
+  public settingModuleSetWifi(wifi: any, password: string, moduleType: string) {
+    return this.http.get(this.keyWifiServer +"/wifisave?"+
+      "s="+ wifi.ssid+
+      "&p="+ password+
+      "&m="+ this.dataProvider.getServerAddress()+
+      "&t="+ moduleType
     );
   }
 

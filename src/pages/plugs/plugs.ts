@@ -24,6 +24,8 @@ export class PlugsPage {
   
   // Chave
   private keyPlugs: string = "plugs";
+  private keyTopicIn: string = "/in";
+  private keyTopicOut: string = "/out";
 
   constructor(
     public navCtrl: NavController,
@@ -49,16 +51,17 @@ export class PlugsPage {
 
   // Inscrever-se no servidor
   private serverSubscribe() {
-    if(this.listPlugs.length > 0)
-      this.mqttProvider.subscribe("+/out");
+    if(this.listPlugs.length > 0) {
+      this.listPlugs.forEach((elem) => {
+        this.mqttProvider.subscribe(elem.token + this.keyTopicOut);
+      });
+    }
   }
 
   // Executar função de módulo
   private functionPlug(item: any) {
     console.log("functionPlug PlugsPage:", item);
-
-    let topic = item.token +"/in";
-    this.mqttProvider.publish(item.active ? "1" : "0", topic);
+    this.mqttProvider.publish(item.active ? "1" : "0", item.token + this.keyTopicIn);
   }
 
   // Atualizar status de módulo
@@ -70,14 +73,22 @@ export class PlugsPage {
     if(item) {
       item.active = active;
       console.log("updateStatus PlugsPage:", item);
-
       this.dataProvider.saveModule(item, this.keyPlugs);
     }
   }
 
   // Adicionar módulo
   private addModule() {
-    this.navCtrl.push(ModulePage, {moduleType: this.keyPlugs});
+    this.navCtrl.push(ModulePage, {moduleType: this.keyPlugs, callback: this.addModuleComm});
+  }
+
+  // Comunicar-se com novo módulo
+  addModuleComm = (_params) => {
+    return new Promise((resolve, reject) => {
+        let moduleAdded = _params;
+        this.mqttProvider.subscribe(moduleAdded.token + this.keyTopicOut);
+        resolve();
+    });
   }
 
   // Editar definições de módulo

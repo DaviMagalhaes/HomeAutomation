@@ -21,6 +21,7 @@ export class ModulePage {
 
   private moduleType: string;
   private tokenSearch: string;
+  private callbackFunction;
   private pageTitle: string;
   
   private module = {
@@ -41,6 +42,7 @@ export class ModulePage {
     public dataProvider: DataProvider) {
 
     this.moduleType = navParams.get("moduleType");
+    this.callbackFunction = navParams.get("callback") ? navParams.get("callback") : null;
     this.tokenSearch = navParams.get("tokenSearch") ? navParams.get("tokenSearch") : null;
 
     this.pageTitle = this.tokenSearch ? "Editar " : "Adicionar ";
@@ -73,8 +75,17 @@ export class ModulePage {
       return;
     }
 
+    if(!this.tokenSearch)
+      this.module.active = (this.moduleType == this.keyLights ? false : true);
     this.dataProvider.saveModule(this.module, this.moduleType);
-    this.navCtrl.pop();
+
+    // Saindo
+    if(!this.tokenSearch) {
+      this.callbackFunction(this.module).then(() => {
+        this.navCtrl.pop();
+      });
+    } else
+      this.navCtrl.pop();
   }
 
   // Deletar módulo
@@ -103,7 +114,13 @@ export class ModulePage {
   // Abrir configurações WI-FI do módulo
   public settingsWifi() {
     console.log("settingsWifi ModulePage");
-    this.navCtrl.push(ModuleWifiPage, {callback: this.setModuleToken});
+    this.navCtrl.push(
+      ModuleWifiPage,
+      {
+        callback: this.setModuleToken,
+        moduleType: this.moduleType
+      }
+    );
   }
 
   // Definir token do módulo / Callback para ModuleWifiPage
